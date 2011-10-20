@@ -426,6 +426,27 @@ class GitCommitMessageListener(sublime_plugin.EventListener):
         message = view_contents(view)
         command.message_done(message)
 
+class GitTagCommand(GitWindowCommand):
+    def run(self):
+        self.run_command(['git', 'tag'], self.tag_done)
+
+    def tag_done(self, result):
+        self.results = filter(self.tag_filter, result.rstrip().split('\n'))
+        if len(self.results):
+            self.show_tag_list()
+        else:
+            sublime.status_message("Nothing to show")
+
+    def show_tag_list(self):
+        self.quick_panel(self.results, self.panel_done,
+            sublime.MONOSPACE_FONT)
+
+    def tag_filter(self, item):
+        # for this class we don't actually care
+        return len(item) > 0
+
+    def panel_done(self, picked):
+        pass
 
 class GitStatusCommand(GitWindowCommand):
     def run(self):
