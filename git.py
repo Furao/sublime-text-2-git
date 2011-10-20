@@ -432,6 +432,7 @@ class GitTagCommand(GitWindowCommand):
 
     def tag_done(self, result):
         self.results = filter(self.tag_filter, result.rstrip().split('\n'))
+        self.results.reverse()
         if len(self.results):
             self.show_tag_list()
         else:
@@ -446,7 +447,22 @@ class GitTagCommand(GitWindowCommand):
         return len(item) > 0
 
     def panel_done(self, picked):
-        pass
+        if 0 > picked < len(self.results):
+            return
+        self.ref = self.results[picked]
+        # the commit hash is the first thing on the second line
+        #ref = item[1].split(' ')[0]
+        # I'm not certain I should have the file name here; it restricts the
+        # details to just the current file. Depends on what the user expects...
+        # which I'm not sure of.
+        self.run_command(
+            ['git', 'log', '-p', '-1', self.ref],
+            self.details_done)
+
+    def details_done(self, result):
+        self.scratch(result, title="Tag: "+self.ref, \
+                syntax=plugin_file("Git Commit Message.tmLanguage"))
+
 
 class GitStatusCommand(GitWindowCommand):
     def run(self):

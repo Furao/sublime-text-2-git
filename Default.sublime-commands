@@ -68,6 +68,14 @@
         "command": "git_pull"
     }
     ,{
+        "caption": "Git: Tag",
+        "command": "git_tag"
+    }
+    ,{
+        "caption": "Git: Tag Add...",
+        "command": "git_tag_add"
+    }
+    ,{
         "caption": "Git: Push",
         "command": "git_push"
     }
